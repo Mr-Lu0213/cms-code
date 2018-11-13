@@ -1,0 +1,158 @@
+<!-- Main content -->
+<section class="content">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <section class="content-header">
+                    <ol class="breadcrumb">
+                        <li><a href="" class="back-page"><i class="fa fa-dashboard"></i>周计划</a></li>
+                        <li class="active">{$week_info.title}</li>
+                    </ol>
+                </section>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post" action="{:url('Week/week')}">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">计划主题</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="title" placeholder="十五字以内" value="{$info.title ?? ''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">期数</label>
+                            <div class="col-sm-8">
+                                <input onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" name="periods" placeholder="标题" value="{$info.periods ?? $periods}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">群二维码</label>
+                            <div class="col-sm-8">
+                                <img src="{notempty name='info.qrcode_url'}{$info.qrcode_url}{else/}/static/img/up.png{/notempty}" id="add_qrcode" title="添加图片" style="border:1px solid #d2d6de; max-width: 120px"/>
+                                <!-- 图片控件 -->
+                                <input type="file" id="qrcode_file" accept="image/*" style="display: none">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">二维码标题</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="qrcode_title" placeholder="十五字以内" value="{$info.qrcode_title ?? ''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">订阅价格</label>
+                            <div class="col-sm-8">
+                                <input onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))" class="form-control" name="price" placeholder="订阅价格" value="{$info.price ?? ''}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">原价</label>
+                            <div class="col-sm-8">
+                                <input onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))" class="form-control" name="origin_price" placeholder="原价" value="{$info.origin_price ?? ''}">
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">邀请达标人数</label>
+                        <div class="col-sm-8">
+                            <input onkeyup="value=value.replace(/[^\d]/g,'')"class="form-control" name="invites_num" placeholder="邀请达标人数" value="{$info.invites_num ?? ''}">
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">计划开始日期</label>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <div class="input-group-addon">
+                                        <i class="fa fa-calendar"></i>
+                                    </div>
+                                    {if condition="$act eq '编辑'"}
+                                    <input type="text" class="form-control pull-right" id="reservation" name="start_date" value="{$info.start_date} - {$info.end_date}">
+                                    {else /}
+                                    <input type="text" class="form-control pull-right" id="reservation" name="start_date">
+                                    {/if}
+                                </div>
+                            </div>
+                            <!-- /.input group -->
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">总结</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="content" name="content">{$info.content ?? ''}</textarea>
+                            </div>
+                        </div>
+
+                    <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="reset" class="btn btn-group-sm btn-default back-page">取消</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--隐藏域-->
+                    <input type="hidden" id="id" name="plan_id" value="{$info.plan_id ?? 0}">
+                    <input type="hidden" id="qrcode" name="qrcode" value="{$info.qrcode ?? ''}">
+            </form>
+            <!-- /.box-body -->
+
+    </div>
+        <!-- /.box -->
+
+</div>
+    <!-- /.col -->
+</div>
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#content').summernote({
+            placeholder: '内容',
+            tabsize: 2,
+            height: 300,
+            lang: 'zh-CN',
+            fontNames: ['Arial', 'Tahoma', '宋体', '微软雅黑', '楷体', '黑体'],
+            fontNamesIgnoreCheck: ['宋体', '微软雅黑', '楷体', '黑体'],
+            callbacks: {
+                onImageUpload: function (files) {
+                    summerSendFile(files[0], 'content', "{:Url('index/uploadImg')}", "{$Think.config.aliyun_oss.res_url}");
+                },
+            }
+
+        });
+    })
+
+    $("#submit-form").click(function () {
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Week/weekAdd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href = "{:url('week/week', '', '', true)}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+
+    })
+
+    $('#reservation').daterangepicker();
+
+
+    $("#add_qrcode").click(function () {
+        $("#qrcode_file").click();
+        $("#qrcode_file").on("change",function(){
+            var objUrl = upload_file(this.files[0]) ;
+            if (objUrl.code == 1) {
+                $("#add_qrcode").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#qrcode").val(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+</script>

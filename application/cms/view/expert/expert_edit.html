@@ -1,0 +1,192 @@
+<!-- Main content -->
+<section class="content">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <section class="content-header">
+                    <ol class="breadcrumb">
+                        <li><a href="" class="back-page"><i class="fa fa-dashboard"></i>专家列表</a></li>
+                        <li class="active">{$info.name}</li>
+                    </ol>
+                </section>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post" action="{:url('Expert/expert')}">
+                    <div class="box-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">运营分类</label>
+                                <div class="col-sm-8">
+                                    {volist name='operate_type' id="v"}
+                                    <label>
+                                        <input type="radio" name="operate_type" value="{$v.value}" {if condition="$act eq '编辑'"
+                                               } disabled{/if} {$v.checked ?? ''} >&nbsp;{$v.name}
+                                    </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {/volist}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="name" placeholder="名称" value="{$info.name ?? ''}">
+                            </div>
+                        </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">性别</label>
+                        <div class="col-sm-8">
+                            {volist name='sex_type' id="v"}
+                            <label>
+                                <input type="radio" name="sex" value="{$v.value}" {$v.checked ?? ''} >&nbsp;{$v.name}
+                            </label>&nbsp;&nbsp;&nbsp;&nbsp;
+                            {/volist}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">头像地址</label>
+                        <div class="col-sm-8">
+                            <img src="{notempty name='info.photo_url'}{$info.photo_url}{else/}/static/img/up.png{/notempty}" id="add-img" title="添加图片" style="border:1px solid #d2d6de; max-width: 120px"/>
+                            <!-- 图片控件 -->
+                            <input type="file" id="file_put" accept="image/*" style="display: none">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">展示图</label>
+                        <div class="col-sm-8">
+                            <img src="{notempty name='info.banner_url'}{$info.banner_url}{else/}/static/img/up.png{/notempty}" id="add_banner" title="添加图片" style="border:1px solid #d2d6de; max-width: 120px"/>
+                            <!-- 图片控件 -->
+                            <input type="file" id="banner_file" accept="image/*" style="display: none">
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">专家简介</label>
+                            <div class="col-sm-8">
+                                <textarea name="result" placeholder="专家简介" class="form-control" >{$info.result ?? ''}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">专家擅长</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="skill" placeholder="专家擅长,建议16字以内" value="{$info.skill ?? ''}">
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">获得荣誉</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="experience" placeholder="获得荣誉" value="{$info.experience ?? ''}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">订阅价格</label>
+                        <div class="col-sm-8">
+                            <input  onkeyup="value=value.replace(/\.\d{2,}$/,value.substr(value.indexOf('.'),3))"  class="form-control"   name="price" placeholder="订阅价格" value="{$info.price ?? ''}">
+                        </div>
+                    </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">标签</label>
+                            <div class="col-sm-8">
+                                <select class="form-control select2 select2-hidden-accessible"
+                                        multiple="" data-placeholder="选择一个或多个标签"
+                                        style="width: 100%;" tabindex="-1" aria-hidden="true" name="tags[]">
+                                    {volist name='tag_list' id='v'}
+                                    <option value="{$v.name}" {$v.selected ?? ''}>{$v.name}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">自定义订购人数</label>
+                        <div class="col-sm-8">
+                            <input type="number" class="form-control" name="custom_order_num" value="{$info.custom_order_num ?? 0}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="reset" class="btn btn-group-sm btn-default back-page">取消</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                <input type="hidden" id="photo" name="photo" value="{$info.photo ?? ''}">
+                <input type="hidden" id="banner" name="banner" value="{$info.banner ?? ''}">
+                        <!--隐藏域-->
+                    {if condition="$act eq '编辑'"}
+                    <input type="hidden" id="id" name="expert_id" value="{$info.expert_id ?? 0}">
+                    <input type="hidden" name="operate_type" value="{$info.operate_type ?? ''}">
+                    {/if}
+            </form>
+            <!-- /.box-body -->
+
+    </div>
+        <!-- /.box -->
+
+</div>
+    <!-- /.col -->
+</div>
+</section>
+
+<script type="text/javascript">
+
+    $("#submit-form").click(function () {
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Expert/expertAdd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href = "{:url('expert/expert', '', '', true)}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+
+    })
+
+    $("input:radio[name='operate_type']").change(function () {
+        if($(this).val() == 1){
+            $('.operate_a').show()
+            $('.operate_b').hide()
+        }else{
+            $('.operate_b').show()
+            $('.operate_a').hide()
+        }
+        $('.select2').width('100%')
+    })
+
+    $('.select2').select2()
+
+
+    // 图片添加
+    $("#add-img").click(function () {
+        $("#file_put").click();
+        $("#file_put").on("change",function(){
+        var objUrl = upload_file(this.files[0]) ;
+         if (objUrl.code == 1) {
+                $("#add-img").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#photo").val(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+
+    $("#add_banner").click(function () {
+        $("#banner_file").click();
+        $("#banner_file").on("change",function(){
+            var objUrl = upload_file(this.files[0]) ;
+            if (objUrl.code == 1) {
+                $("#add_banner").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#banner").val(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+</script>

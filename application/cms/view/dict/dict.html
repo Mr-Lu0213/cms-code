@@ -1,0 +1,119 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+
+                        <form id="form-data" action="{:url('Dict/dictadd')}">
+                            <button type="button" class="btn btn-primary btn-sm create-button table_btn">新增内容分类</button>
+                        </form>
+
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>名称</th>
+                            <th>排序</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="list" id="v"}
+                        <tr id="node-{$v.class_id}" class="initialized parent_tr collapsed">
+                            <td >{$v.class_id}</td>
+                            <td>{$v.class_name}</td>
+                            <td><input type="number" class="form-control" name="seq" onblur="change_seq({$v.class_id},this)" value="{$v.seq}"></td>
+                            <td>&nbsp;
+                                <a href="{:url('Dict/dictEdit')}?id={$v.class_id}&is_update=1">编辑</a>&nbsp;&nbsp;
+                                <a href="#" onclick="del('{$v.class_id}')">删除</a>&nbsp;&nbsp;
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : false,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : false,
+            "columnDefs"  :[
+                {
+                    "targets":[],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang
+        })
+
+    })
+
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Dict/dictEdit')}";
+    })
+
+    /**
+     * 两级表单
+     */
+    $(document).on("click", ".collapsed .parant_expander", function () {
+        var node_id = $(this).attr('node-id')
+        $('.parent_tr').removeClass('expanded').addClass('collapsed')
+        $('#node-'+node_id).removeClass('collapsed').addClass('expanded')
+        $('.child-node').hide()
+        $('.child-of-node-'+node_id).show()
+    })
+
+    $(document).on("click", ".expanded .parant_expander", function () {
+        var node_id = $(this).attr('node-id')
+        $('#node-'+node_id).removeClass('expanded').addClass('collapsed')
+        $('.child-of-node-'+node_id).hide()
+    })
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('Dict/dictDel')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.href = "{:url('Dict/dict')}";
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+    }
+
+    function change_seq(id,obj) {
+        var seq = $(obj).val();
+        var url = "{:url('Dict/dictSeq')}";
+        var result = http_service(url, {id:id ,seq:seq},'POST');
+        if(result.code == 0){
+            layer.msg(result.msg,{time:1000,icon:5});
+        }
+    }
+
+</script>

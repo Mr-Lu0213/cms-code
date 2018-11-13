@@ -1,0 +1,113 @@
+<!-- Main content -->
+<section class="content">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <section class="content-header">
+                    <ol class="breadcrumb">
+                        <li><a href="{:url('Article/article')}" class="back-page"><i class="fa fa-dashboard"></i> 资讯列表</a></li>
+                        <li class="active">{$act}</li>
+                    </ol>
+                </section>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post">
+                        <div class="form-group">
+                            <label for="desc" class="col-sm-2 control-label">详情</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" id="content" name="content" placeholder="编辑资讯详情">{$info.content ?? ''}</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-group-sm btn-default back-page">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--隐藏域-->
+                    <input type="hidden" id="id" name="id" value="{$info.article_id ?? 0}">
+                </form>
+            <!-- /.box-body -->
+    </div>
+        <!-- /.box -->
+</div>
+    <!-- /.col -->
+</div>
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $('#content').summernote({
+            placeholder: '内容',
+            tabsize: 2,
+            height: 300,
+            lang:'zh-CN',
+            fontNames: ['Arial', 'Tahoma', '宋体', '微软雅黑', '楷体', '黑体'],
+            fontNamesIgnoreCheck: ['宋体', '微软雅黑', '楷体', '黑体'],
+            callbacks: {
+                onImageUpload: function(files) {
+                    sendFile(files[0], 'content');
+                },
+            }
+
+        });
+
+        function sendFile(file, object) {
+            data = new FormData();
+            data.append("file", file);
+            $.ajax({
+                dataType : "JSON",
+                type: "POST",
+                url: "{:Url('index/uploadImg')}",
+                data: data,
+                processData:false,
+                contentType: false,
+                success: function(data) {
+                    var url = "{$Think.config.aliyun_oss.res_url}" + data.data.photo;
+                    console.log(url);
+                    $("#"+object).summernote('insertImage', url);
+                }
+            });
+        }
+
+    });
+
+    $("#submit-form").click(function () {
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Article/save')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href = "{:url('Article/index')}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+    })
+
+    // 图片添加
+    $("#add-img").click(function () {
+        $("#file_put").click();
+        $("#file_put").on("change",function(){
+            var objUrl = upload_file(this.files[0]) ;
+            if (objUrl.code == 1) {
+                $("#add-img").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#photo").val(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+    $('.check_all').click(function () {
+        if($(this).prop('checked') == true){
+            $(this).parent().parent().find('.check_item').prop('checked', true)
+        }
+    })
+
+</script>

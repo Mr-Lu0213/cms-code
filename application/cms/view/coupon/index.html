@@ -1,0 +1,165 @@
+
+<style>
+    .table tbody tr td{
+        vertical-align: middle;
+    }
+</style>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div class="box box-primary">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+
+                        <form id="form-data" >
+                            <button type="button" class="btn btn-primary btn-sm create-button table_btn">新增</button>
+                            <input type="file" id="file" accept="application/vnd.ms-excel" style="display: none">
+                        </form>
+
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>场景</th>
+                            <th>可用产品</th>
+                            <th>优惠金额</th>
+                            <th>满减达标金额</th>
+                            <th>开始日期</th>
+                            <th>结束日期</th>
+                            <th>有效期（天）</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {volist name="list" id="v"}
+                            <tr>
+                                <td>
+                                    {$v.coupon_id}
+                                </td>
+                                <td>{$v.name}</td>
+                                <td>{$v.type_text}</td>
+                                <td>{$v.scene_text}</td>
+                                <td>{$v.target_text}</td>
+                                <td><span class="fa fa-rmb">&nbsp;{$v.amount}</span></td>
+                                <td><span class="fa fa-rmb">&nbsp;{$v.reach_amount}</span></td>
+                                <td>{$v.start_date|substr = 0,10}</td>
+                                <td>{$v.end_date|substr = 0,10}</td>
+                                <td>{$v.duration}</td>
+                                <td>
+                                    {if condition='$v.scene eq 3'}
+                                    <!-- Split button -->
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-xs btn-primary">批量发放</button>
+                                        <button type="button" class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a href="{$Think.config.cms.xls_coupon}">下载模板</a></li>
+                                            <li><a href="#" onclick="importData('{$v.coupon_id}')">导入用户</a></li>
+                                        </ul>
+                                    </div>
+                                    {else/}
+                                    {$v.status_text}
+                                    {/if}
+                                </td>
+                                <td>
+                                    {if condition='$v.status eq 1 && $v.scene neq 3'}
+                                    <a href="#" onclick="del('{$v.coupon_id}')">删除&nbsp;&nbsp;</a>
+                                    {else/}
+                                    <font color="#cccccc">删除</font>
+                                    {/if}
+                                </td>
+                            </tr>
+                            {/volist}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+<script>
+    $(function () {
+        var lang = datatable_lang
+
+        $('#table').DataTable({
+            "language"    : lang,
+            'paging'      : true,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[11],
+                    "searchable":false
+                }
+            ],
+            "dom": 'flrtip'
+        })
+
+    })
+
+    $('.photo img').click(function () {
+        var item = $(this).parent().attr('id')
+        layer.photos({
+            photos: '#'+item
+            ,anim: 5
+        });
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Coupon/edit')}";
+    })
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('Coupon/delete')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.reload();
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+    }
+
+    function importData(id) {
+        var url = "{:url('Coupon/importData')}?id="+id
+        $("#file").click()
+        $("#file").on("change",function(){
+            var objUrl = upload_file(this.files[0], url)
+            if (objUrl.code == 1) {
+                layer.msg(objUrl.msg, {icon:6, time:2000}, function () {
+                    window.location.reload()
+                });
+            }else{
+                layer.msg(objUrl.msg, {icon:5, time:2000}, function () {
+                    window.location.reload()
+                });
+            }
+        });
+    }
+
+
+</script>

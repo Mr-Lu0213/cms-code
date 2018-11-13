@@ -1,0 +1,79 @@
+@charset "UTF-8";
+
+
+.content-header{
+    padding-bottom: 10px;
+}
+
+.content-header>.breadcrumb{
+    left:0;
+    padding-left: 15px;
+    font-size: 15px;
+    margin-bottom: 0.5em;
+}
+
+.box-body{
+    margin-top: 15px;
+}
+
+.datepicker{
+    z-index: 999999; !important;
+}
+
+.clear-both{
+    clear: both;
+}
+
+#table_wrapper{
+    padding: 0 15px;
+}
+
+/** datatables 搜索框位置 **/
+.table-custom .dataTables_filter{
+    position: absolute;
+    right: 15px;
+    bottom: 0px;
+}
+.table-custom .form-control{
+    width: 170px;
+}
+
+div.dataTables_wrapper div.dataTables_filter{
+    text-align: left;
+}
+
+.page_render{
+    overflow: hidden;
+    text-align: center;
+    margin: 0 auto;
+}
+.table_btn{
+    float: left;
+    margin-left: 15px;
+}
+.menu_collapsed:hover{
+    cursor: pointer;
+}
+.menu_box{
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+.menu_box div{
+    padding-bottom: 5px;
+    overflow: hidden;
+}
+
+.font-normal{
+    font-weight: normal !important;
+}
+
+.label{
+    padding: .3em .6em .3em !important;
+    font-weight: 500 !important;
+}
+label{
+    font-weight: 500 !important;
+}
+.dataTables_filter label{
+    margin-left: 15px;
+}

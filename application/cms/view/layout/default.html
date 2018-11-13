@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{$Think.config.system_name}</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="../../static/img/logo.gif" />
+    <!-- Bootstrap 3.3.7 -->
+    {css href="../../static/css/bootstrap.min.css"}
+    <!-- Font Awesome -->
+    {css href="../../static/css/font-awesome.min.css"}
+    <!-- Ionicons -->
+    {css href="../../static/css/ionicons.min.css"}
+    <!-- DataTables -->
+    {css href="../../static/css/dataTables.bootstrap.min.css"}
+    <!-- iCheck for checkboxes and radio inputs -->
+    {css href="../../static/iCheck/all.css"}
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    {css href="../../static/css/_all-skins.min.css"}
+    {css href="../../static/treeTable/treeTable.css"}
+    {css href="../../static/summernote/dist/summernote.css"}
+    {css href="../../static/webuploader-0.1.5/webuploader.css"}
+    {css href="../../static/select2/dist/css/select2.min.css"}
+    {css href="../../static/bootstrap-daterangepicker/daterangepicker.css"}
+
+    <!-- Theme style -->
+    {css href="../../static/css/AdminLTE.min.css"}
+    {css href="../../static/css/upload.css"}
+    {css href="../../static/css/common.css"}
+    <!-- Google Font -->
+    {css href="../../static/css/fonts-googleapi.css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"}
+
+    <!-- jQuery 3 -->
+    {js href="../../static/js/jquery.min.js"}
+    <!--layer-->
+    {js href="../../static/layer-v3.1.1/layer.js"}
+    <!-- Bootstrap 3.3.7 -->
+    {js href="../../static/js/bootstrap.min.js"}
+    <!-- AdminLTE App -->
+    {js href="../../static/js/adminlte.min.js"}
+
+    <!-- DataTables -->
+    {js href="../../static/js/jquery.dataTables.min.js"}
+    {js href="../../static/js/dataTables.bootstrap.min.js"}
+    <!-- iCheck 1.0.1 -->
+    {js href="../../static/iCheck/icheck.min.js"}
+
+    {js href="../../static/js/clipboard.min.js"}
+    {js href="../../static/treeTable/treeTable.js"}
+    {js href="../../static/summernote/dist/summernote.js"}
+    {js href="../../static/webuploader-0.1.5/webuploader.min.js"}
+    {js href="../../static/select2/dist/js/select2.min.js"}
+    {js href="../../static/js/jquery.nicescroll.js"}
+    {js href="../../static/bootstrap-datepicker/js/bootstrap-datepicker.js"}
+    {js href="../../static/moment/moment.js"}
+
+    {js href="../../static/bootstrap-daterangepicker/daterangepicker.js"}
+
+    {js href="../../static/js/config.js"}
+    {js href="../../static/js/common.js"}
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="{:url('Index/index')}" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">{$Think.config.system_abbr}</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg">{$Think.config.system_name}</span>
+        </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+           <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="">
+                            <span class="hidden-xs fa fa-user">&nbsp;当前用户：{$Think.session.user.name}</span>
+                        </a>
+                    </li>
+
+                    <li class="dropdown user user-menu fa  ">
+                        <a href="{:url('Login/loginout')}" class="">
+                            <span class="hidden-xs fa fa-sign-out">&nbsp;退出登录</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+
+    <aside class="main-sidebar">
+
+        <section class="sidebar">
+
+            <ul class="sidebar-menu" data-widget="tree">
+
+                {volist name="nav_menu_list" id="vo" }
+                <li class="treeview {eq name='vo.active' value='1'}active{/eq}">
+                    <a href="#">
+                        <i class="fa fa-{$vo.icon}"></i>
+                        <span>{$vo.name}</span>
+                        <span class="pull-right-container"></span>
+                    </a>
+                    {notempty name="vo.children"}
+                    <ul class="treeview-menu">
+                        {volist name="vo.children" id="cr" }
+                        <li class="{eq name='cr.active' value='1'}active{/eq}"><a href='{$cr.link_url}'><i class="fa fa-{$cr.icon|default='circle-o'}"></i> {$cr.name}</a></li>
+                        {/volist}
+                    </ul>
+                    {/notempty}
+                </li>
+                {/volist}
+
+            </ul>
+        </section>
+
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        {__REPLACE__}
+
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!--<footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>Version</b> 1.0.0
+        </div>
+        <strong>Copyright &copy; 2016-2017 <a href="#">###</a>.</strong> All rights
+        reserved.
+    </footer>-->
+
+</div>
+<!-- ./wrapper -->
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+
+<!-- Main content -->
+<section class="content">
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <section class="content-header">
+                    <ol class="breadcrumb">
+                        <li><a href="{:url('Week/edit')}" class="back-page"><i class="fa fa-dashboard"></i> 周计划内容</a></li>
+                        <li class="active">{$week_info.title}</li>
+                    </ol>
+                </section>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post">
+                    {empty name='info'}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">列表</label>
+                        <div class="col-sm-8">
+                            <table class="table table-bordered table-hover table-custom">
+                                <tr>
+                                    <th>日期</th>
+                                    <th>每日小标题</th>
+                                    <th>内容类型</th>
+                                    <th>内容标题</th>
+                                    <th>分值</th>
+                                    <th>操作</th>
+                                </tr>
+                                {volist name='list' id='v'}
+                                <tr>
+                                    <td>{$v.week_text}</td>
+                                    <td>{$v.week_day_title}</td>
+                                    <td>{$v.content_text}</td>
+                                    <td>{$v.content_title}</td>
+                                    <td>{$v.points}</td>
+                                    <td>
+                                        <a href="{:url('week/editEdit')}?id={$v.item_id}&plan_id={$week_info.plan_id ?? 0}">编辑</a>
+                                        {if condition="$week_info.start_date gt $now_time"}
+                                        <a href="#" onclick="del('{$v.item_id}')">删除</a>&nbsp;&nbsp;
+                                        {else /}
+                                        <a href="javascript:;" style="color:#ddd">删除</a>&nbsp;&nbsp;
+                                        {/if}
+                                    </td>
+                                </tr>
+                                {/volist}
+                            </table>
+                        </div>
+                    </div>
+                    {/empty}
+                    &nbsp;
+                    <div class="form-group operate_a">
+                        <label class="col-sm-2 control-label">日期</label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2" id="week_num" name="week_num">
+                                {volist name='week_map' id='v'}
+                                <option value="{$key}" title="{$v.title}">{$v.name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">每日小标题</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="week_day_title"
+                                   name="week_day_title" placeholder="每日标题" value="{$week_map.1.title}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">内容类型</label>
+                        <div class="col-sm-8">
+                            <label>
+                                <input type="radio" class="content_type"  name="content_type" placeholder="内容类型" value="2" checked
+                                >&nbsp;图文
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">内容标题</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="content_title" placeholder="内容标题">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">图文详情</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" id="content" name="content" ></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">分值</label>
+                        <div class="col-sm-8">
+                            <input onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" name="points" placeholder="分值" value="{$info.points ?? ''}">
+                        </div>
+                    </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-group-sm btn-default back-page">取消</button>
+                            </div>
+                        </div>
+
+                    <!--隐藏域-->
+                    <input type="hidden" id="plan_id" name="plan_id" value="{$week_info.plan_id ?? 0}">
+                    <input type="hidden" id="day_title" name="day_title" value="">
+
+            </form>
+            <!-- /.box-body -->
+
+    </div>
+        <!-- /.box -->
+
+</div>
+    <!-- /.col -->
+</div>
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#content').summernote({
+            placeholder: '内容',
+            tabsize: 2,
+            height: 300,
+            lang: 'zh-CN',
+            fontNames: ['Arial', 'Tahoma', '宋体', '微软雅黑', '楷体', '黑体'],
+            fontNamesIgnoreCheck: ['宋体', '微软雅黑', '楷体', '黑体'],
+            callbacks: {
+                onImageUpload: function (files) {
+                    summerSendFile(files[0], 'content', "{:Url('index/uploadImg')}", "{$Think.config.aliyun_oss.res_url}");
+                },
+            }
+
+        });
+    })
+
+    $("#submit-form").click(function () {
+
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Week/editadd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.reload();
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+    })
+
+    $('#week_num').change(function () {
+        var value = $(this).val()
+        var title = $(this).find("option[value="+value+"]").attr('title')
+        if(title){
+            $('#week_day_title').val(title)
+            $('#day_title').val(title)
+        }
+    })
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('Week/editDel')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.reload();
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+    }
+
+
+
+
+</script>

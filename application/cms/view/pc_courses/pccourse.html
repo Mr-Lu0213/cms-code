@@ -1,0 +1,94 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+                        <form id="form-data" action="{:url('PcCourses/pccourseadd')}" method="post" >
+                            <button type="button" class="btn btn-primary btn-sm create-button table_btn" >新建精品课程</button>
+                        </form>
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>标题</th>
+                            <th>展示图</th>
+                            <th>价格</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="pccourse_list" id="v"}
+                        <tr id="node-{$v.id}" class="initialized parent_tr collapsed">
+                            <td>{$v.course_id}</td>
+                            <td>{$v.course.title}</td>
+                            <td><img src="{notempty name='v.course.photo'}{$v.course.photo}{/notempty}" height="40px"></td>
+                            <td>{$v.course.price}</td>
+                            <td>
+                                <a href="#" onclick="del('{$v.id}')">删除</a>&nbsp;
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[4],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+    $(".select2").change(function () {
+        var data = $(this).serialize();
+        window.location.href = "{:url('PcCourses/pccourse')}?"+data;
+
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('PcCourses/pccourseadd')}";
+    })
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('PcCourses/pccourseDel')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.reload();
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+    }
+
+
+</script>

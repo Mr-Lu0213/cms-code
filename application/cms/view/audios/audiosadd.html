@@ -1,0 +1,87 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-header">
+                    <section class="content-header">
+                        <ol class="breadcrumb">
+                            <li><a href="" class="back-page"><i class="fa fa-dashboard"></i>推荐音频</a></li>
+
+                        </ol>
+                    </section>
+                </div>
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>音频章节</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="audios_list" id="v"}
+                        <tr id="node-{$v.ma_id}" class="initialized parent_tr collapsed">
+                            <td>{$v.ma_id}</td>
+                            <td>{$v.ma_title}</td>
+                            <td>
+                                <a href="javascript:;" onclick="add('{$v.ma_id}')">添加</a>&nbsp;
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging': true,
+            'lengthChange': false,
+            'info': false,
+            'autoWidth': false,
+            "stateSave": true,
+            'ordering': true,
+            "order": [[0, "desc"]],
+            'searching': true,
+            "columnDefs": [
+                {
+                    "targets": [2],
+                    "searchable": false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Audios/audios')}";
+    })
+
+    function add(id) {
+        layer.confirm('确认添加？', {icon: 3, title: '修改状态'}, function (index) {
+            var url = "{:url('Audios/save')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if (result.code == 1) {
+                layer.msg(result.msg, {time: 1000, icon: 6}, function () {
+                    window.location.href = "{:url('Audios/audios')}";
+                });
+            } else {
+                layer.msg(result.msg, {icon: 5});
+            }
+        });
+    }
+</script>

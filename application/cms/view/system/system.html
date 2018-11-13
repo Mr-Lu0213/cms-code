@@ -1,0 +1,98 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover ">
+                        <form id="form-data" action="{:url('System/systemadd')}" method="post" >
+                            <button type="button" class="btn btn-primary btn-sm create-button table_btn" >添加</button>
+                        </form>
+
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>内容</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="list" id="v"}
+                        <tr>
+                            <td>{$v.id}</td>
+                            <td>{$v.content}</td>
+                            <td>
+                                <a href="{:url('System/systemedit')}?id={$v.id}" >编辑&nbsp;&nbsp;</a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : true,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[2],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('System/systemEdit')}";
+    })
+
+
+
+    function statusArt(id, status) {
+        if (status == 1) {
+            var tips = '未删除?'
+        } else {
+            var tips = '取消已删除?'
+        }
+        layer.confirm(tips, {icon: 3, title: '修改状态'}, function(index) {
+            var url = "{:url('System/systemStatus')}";
+            var result = http_service(url, {id: id, status: status}, 'POST');
+            if (result.code == 1) {
+                layer.msg(result.msg, {time: 1000, icon: 6}, function () {
+                    window.location.reload();
+                });
+            } else {
+                layer.msg(result.msg, {icon: 5});
+            }
+        });
+    }
+
+
+</script>

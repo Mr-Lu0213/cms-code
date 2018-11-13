@@ -1,0 +1,95 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>类型</th>
+                            <th>用户昵称</th>
+                            <th>评论对象</th>
+                            <th>评论内容</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="list" id="v"}
+                        <tr id="node-{$v.comment_id}" class="initialized parent_tr collapsed">
+
+                            <td>{$v.comment_id}</td>
+                            <td>{$v.type_text}</td>
+                            <td>{$v.nick_name}</td>
+                            <td>{$v.relevance}</td>
+                            <td>{$v.content}</td>
+                            <td>{$v.created_time}</td>
+                            <td>
+                                <a href="#" onclick="del('{$v.comment_id}')">删除</a>
+                            </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : true,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[6],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+    $(".select2").change(function () {
+        var data = $(this).serialize();
+        window.location.href = "{:url('Comment/comment')}?"+data;
+
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Comment/commentEdit')}";
+    })
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('Comment/commentDel')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.href = "{:url('Comment/comment')}";
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+    }
+
+</script>

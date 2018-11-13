@@ -1,0 +1,101 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <section class="content-header">
+                        <ol class="breadcrumb">
+                            <li><a href="#" class="back-page"><i class="fa fa-dashboard"></i>内容</a></li>
+                            <li class="active">{$info.name}</li>
+                        </ol>
+                    </section>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post" action="{:url('Audio/audios')}">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="name" placeholder="名称" value="{$info.name ?? ''}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">展示图</label>
+                                <div class="col-sm-8">
+                                    <img src="{notempty name='info.icon_url'}{$info.icon_url}{else/}/static/img/up.png{/notempty}" id="add_icon" title="添加封面图" style="border:1px solid #d2d6de; max-width: 120px"/>
+                                    <!-- 图片控件 -->
+                                    <input type="file" id="icon_file" accept="image/*" style="display: none">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">选择上级标签</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" {$readonly ? disabled : ''} name="parent_id">
+                                    <option value="0">--选择--</option>
+                                    {volist name="parent_list" id='v'}
+                                    <option value="{$v.column_id}" {eq name="$v.active" value="1"}selected{/eq}
+                                    >{$v.name}</option>
+                                    {/volist}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-8">
+                                    <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="button" class="btn btn-group-sm btn-default back-page">取消</button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <input type="hidden" id="icon_url" name="icon_url" value="{$info.icon_url ?? 0}">
+                        <!--隐藏域-->
+                        {if condition="$act eq '编辑'"}
+                        <input type="hidden" id="id" name="column_id" value="{$info.column_id ?? 0}">
+                        {/if}
+                    </form>
+                    <!-- /.box-body -->
+
+                </div>
+                <!-- /.box -->
+
+            </div>
+            <!-- /.col -->
+        </div>
+</section>
+
+<script type="text/javascript">
+
+    $("#submit-form").click(function () {
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Audio/audioadd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href = "{:url('Audio/audio', '', '', true)}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+
+    })
+
+    $("#add_icon").click(function () {
+        $("#icon_file").click();
+        $("#icon_file").on("change",function(){
+            var objUrl = upload_file(this.files[0]) ;
+            if (objUrl.code == 1) {
+                $("#add_icon").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#icon_url").val(objUrl.data.photo);
+                console.log(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+
+
+</script>

@@ -1,0 +1,203 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+
+                        <form id="form-data" action="{:url('Audio/audioadd')}">
+                            <button type="button" class="btn btn-primary btn-sm create-button table_btn">新增一级栏目</button>
+                        </form>
+
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>名字</th>
+                            <th>封面图</th>
+                            <th>排序</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="list" id="v"}
+                        <tr id="node-{$v.column_id}" class="initialized parent_tr collapsed">
+                            <td  style="padding-left: 25px">
+                                <span style="padding-left: 20px" class="parant_expander expander" node-id="{$v.column_id}"></span>
+                                {$v.column_id}
+                            </td>
+                            <td>{$v.name}</td>
+                            <td><img src="{notempty name='v.icon_url'}{$v.icon_url}{/notempty}" height="40px"></td>
+                            <td><input type="number" class="form-control" name="seq" onblur="change_seq({$v.column_id},this)" value="{$v.seq}"></td>
+                            <td>
+                                <a href="{:url('Audio/audios')}?parent_id={$v.column_id}">添加子栏目</a>&nbsp;&nbsp;
+
+                                <a href="{:url('Audio/audioEdit')}?id={$v.column_id}&is_update=1">编辑</a>&nbsp;&nbsp;
+                                <a href="#" onclick="del('{$v.column_id}')">删除</a>&nbsp;&nbsp;
+                                {if condition="$v.status eq 1"}
+                                <a href="#" onclick="statusArt('{$v.column_id}', 0)">下线&nbsp;&nbsp;</a>
+                                {else /}
+                                <a href="#" onclick="statusArt('{$v.column_id}', 1)">上线&nbsp;&nbsp;</a>
+                                {/if}
+
+                            </td>
+                        </tr>
+                        {notempty name="v.children"}
+                        {foreach name="v.children" id="vv"}
+                        <tr class="child-node child-of-node-{$vv.parent_id}" style="display: none">
+                            <td style="padding-left: 25px">
+                                <span style="padding-left: 20px" class=""> ├─ </span>
+                                {$vv.column_id}
+                            </td>
+                            <td>{$vv.name}</td>
+                            <td><img src="{notempty name='vv.icon_url'}{$vv.icon_url}{/notempty}" height="40px"></td>
+                            <td><input type="number" class="form-control" name="seq" onblur="change_seq({$vv.column_id},this)" value="{$vv.seq}"></td>
+
+                            <td>
+                                <a href="{:url('Audio/audios')}?id={$vv.column_id}">编辑</a>&nbsp;&nbsp;
+                                <a href="{:url('Audio/edit')}?id={$vv.column_id}" >音频内容&nbsp;&nbsp;</a>
+                                <a href="#" onclick="del('{$vv.column_id}')">删除</a>&nbsp;&nbsp;
+                                {if condition="$vv.status eq 1"}
+                                <a href="#" onclick="statusArt('{$vv.column_id}', 0)">下线&nbsp;&nbsp;</a>
+                                {else /}
+                                <a href="#" onclick="statusArt('{$vv.column_id}', 1)">上线&nbsp;&nbsp;</a>
+                                {/if}
+                                {if condition="$vv.recommend eq 0"}
+                                <a href="#" onclick="statusArts('{$vv.column_id}', 1)">推荐&nbsp;&nbsp;</a>
+                                {else /}
+                                <a href="#" onclick="statusArts('{$vv.column_id}', 0)">取消推荐&nbsp;&nbsp;</a>
+                                {/if}
+                            </td>
+                        </tr>
+                        {/foreach}
+                        {/notempty}
+                        {/volist}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : false,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[4],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Audio/audioEdit')}";
+    })
+
+
+
+    /**
+     * 两级表单
+     */
+    $(document).on("click", ".collapsed .parant_expander", function () {
+        var node_id = $(this).attr('node-id')
+        $('.parent_tr').removeClass('expanded').addClass('collapsed')
+        $('#node-'+node_id).removeClass('collapsed').addClass('expanded')
+        $('.child-node').hide()
+        $('.child-of-node-'+node_id).show()
+    })
+
+    $(document).on("click", ".expanded .parant_expander", function () {
+        var node_id = $(this).attr('node-id')
+        $('#node-'+node_id).removeClass('expanded').addClass('collapsed')
+        $('.child-of-node-'+node_id).hide()
+    })
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('Audio/audioDel')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.href = "{:url('Audio/audio')}";
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+
+    }
+
+    function statusArt(id, status) {
+        if (status == 1) {
+            var tips = '确定上线?'
+        } else {
+            var tips = '确定下线?'
+        }
+        layer.confirm(tips, {icon: 3, title: '修改状态'}, function(index) {
+            var url = "{:url('Audio/audioStatus')}";
+            var result = http_service(url, {id: id, status: status}, 'POST');
+            if (result.code == 1) {
+                layer.msg(result.msg, {time: 1000, icon: 6}, function () {
+                    window.location.reload();
+                });
+            } else {
+                layer.msg(result.msg, {icon: 5});
+            }
+        });
+    }
+
+    function statusArts(id, recommend) {
+        if (recommend == 1) {
+            var tips = '推荐?'
+        } else {
+            var tips = '取消推荐?'
+        }
+        layer.confirm(tips, {icon: 3, title: '修改状态'}, function (index) {
+            var url = "{:url('Audio/audioRecommend')}";
+            var result = http_service(url, {id: id, recommend: recommend}, 'POST');
+            if (result.code == 1) {
+                layer.msg(result.msg, {time: 1000, icon: 6}, function () {
+                    window.location.reload();
+                });
+            } else {
+                layer.msg(result.msg, {icon: 5});
+            }
+        });
+    }
+
+    function change_seq(id,obj) {
+        var seq = $(obj).val();
+        var url = "{:url('Audio/audioSeq')}";
+        var result = http_service(url, {id:id ,seq:seq},'POST');
+        if(result.code == 0){
+            layer.msg(result.msg,{time:1000,icon:5});
+        }
+    }
+
+
+</script>

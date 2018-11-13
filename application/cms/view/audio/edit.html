@@ -1,0 +1,111 @@
+<style>
+    .expert_list{
+        display: none;
+    }
+</style>
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <section class="content-header">
+                        <ol class="breadcrumb">
+                            <li><a href="{:url('Audio/edit')}" class="back-page"><i class="fa fa-dashboard"></i>音频课列表</a></li>
+                            <li class="active">{$audio_info.name}</li>
+                        </ol>
+                    </section>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post">
+                        {empty name='info'}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">列表</label>
+                            <div class="col-sm-8">
+                                <table class="table table-bordered table-hover table-custom">
+                                    {volist name='column_item_list' id='v'}
+                                    <tr>
+
+                                        <td>{$v.title}</td>
+                                        <td>{$v.status_text}</td>
+                                        <td>{$v.created_time}</td>
+                                        <td>
+                                            <a href="#" onclick="del('{$v.id}')">删除</a>&nbsp;&nbsp;
+                                        </td>
+                                    </tr>
+                                    {/volist}
+                                </table>
+                            </div>
+                        </div>
+                        {/empty}
+                        &nbsp;
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{$data.name}</label>
+                            <div class="col-sm-8">
+                                <select class="form-control select2 " id="content_id"
+                                        style="width: 100%;" name="content_id">
+                                    {volist name='list' id='v'}
+                                    <option value="{$v.id}" >{$v.title}</option>
+                                    {/volist}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-group-sm btn-default back-page">取消</button>
+                            </div>
+                        </div>
+
+                        <!--隐藏域-->
+
+                        <input type="hidden" id="column_id" name="column_id" value="{$data.column_id}">
+
+                    </form>
+                    <!-- /.box-body -->
+
+                </div>
+                <!-- /.box -->
+
+            </div>
+            <!-- /.col -->
+        </div>
+</section>
+
+<script type="text/javascript">
+
+    $('.select2').select2()
+
+    $("#submit-form").click(function () {
+
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Audio/editAdd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.reload();
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+    });
+
+
+    function del(id) {
+        layer.confirm('确定删除吗?', {icon: 3, title:'删除操作不可撤回'}, function(index){
+            var url = "{:url('Audio/editDel')}";
+            var result = http_service(url, {id: id}, 'POST');
+            if(result.code == 1){
+                layer.msg(result.msg, {time:1000, icon:6}, function () {
+                    window.location.reload();
+                });
+            }else{
+                layer.msg(result.msg, {icon:5});
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,89 @@
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<section class="content-header">
+						<ol class="breadcrumb">
+							<li><a href="" class="back-page"><i class="fa fa-dashboard"></i>反馈列表</a></li>
+							<li class="active">{$feeddetail_info.content}</li>
+						</ol>
+					</section>
+				</div>
+<form class="form-horizontal" id="info_form" role="form" action="#" method="post">
+	<div class="bs-example4" data-example-id="simple-responsive-table" style="padding-left:0;margin-left:15px;">
+		&nbsp;&nbsp;&nbsp;
+		<div class="form-group">
+			<label class="col-sm-2 control-label" style="text-align:right;">回复列表</label>
+			<div class="col-sm-8" id="reply_list">
+				{volist name="reply_list" id="v"}
+				<div class="list_div">
+					<p>【{$v.created_time}&nbsp;{$v.type_text}：】&nbsp;{$v.content}</p >
+				</div>
+				{/volist}
+			</div>
+			<div class="clearfix" style="margin-bottom: 2em;"></div>
+		</div>
+
+		<input type="hidden" id="feed_id" value="{$feedback_list.id}">
+
+		<!--底部按钮-->
+		<div class="form-group">
+			<div class="col-sm-8 col-sm-offset-2" style="padding-left:50px"> 
+				<button type="button" id="info_button" onclick="addreply();" class="btn btn-primary" style="width:90px;margin-right:30px;float:left">添加回复</button>
+
+				<button type="button" id="info_cancle" class="btn btn-primary back-page" style="width:60px;margin-right:30px;float:left">返回</button>
+			</div>
+		</div>
+
+</form>
+<div class="clearfix" style="margin-bottom: 1em;"></div>
+
+<script>
+
+	function addreply(){
+	    var reply_list = $("#reply_list");
+		var feed_id = $("#feed_id").val();
+        layer.prompt({
+            formType: 2,
+            title: '发送回复',
+            offset: '150px',
+            area: ['500px', '300px'] //自定义文本域宽高
+        }, function(value, index, elem){
+            if(value == ""){
+                layer.msg('回复不能为空');
+            }else{
+                layer.load(1);
+                $.ajax({
+                    url: "{:url('feedback/feedreplyadd')}",
+                    dataType: "JSON",
+                    data: {'content':value, 'feed_id':feed_id},
+                    type: "POST",
+                    success:function (data) {
+                        if(data.code == 1) {
+                            reply_list.append(data.msg);
+                            layer.msg('回复成功',{icon:6, time:1000},function(){
+                                layer.closeAll();
+                            });
+                        }else{
+                            layer.msg(data.msg,{icon:5},function(){
+                                layer.closeAll('loading');
+                            });
+                        }
+                    },
+                    error:function(XMLHttpRequest, textStatus, errorThrown){
+                        layer.msg('出错啦',{icon:5},function(){
+                            layer.closeAll('loading');
+                        });
+                    }
+                });
+
+            }
+
+        });
+
+	}
+
+	
+</script> 

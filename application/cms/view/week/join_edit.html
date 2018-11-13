@@ -1,0 +1,94 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <section class="content-header">
+                        <ol class="breadcrumb">
+                            <li><a href="" class="back-page"><i class="fa fa-dashboard"></i>周报名计划管理</a></li>
+                            <li class="active">{$act}</li>
+                        </ol>
+                    </section>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post" action="{:url('Week/join')}">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">用户</label>
+                                    <div class="col-sm-8">
+                                        <input type="text"  class="form-control" name="nick_name" placeholder="用户" value="{$info.nick_name ?? ''}">
+                                    </div>
+                                </div>
+
+                                <label class="col-sm-2 control-label">报名方式</label>
+                                <div class="col-sm-8">
+                                    <input type="radio"  name="type" placeholder="报名方式" value="1"
+                                           {if condition="$info.type eq 1"}
+                                           checked
+                                           {/if}
+                                    >&nbsp;支付
+                                    &nbsp; &nbsp;&nbsp;
+                                    <input type="radio"  name="type" placeholder="报名方式" value="2"
+                                           {if condition="$info.type eq 2"}
+                                           checked
+                                           {/if}
+                                    >&nbsp;邀请好友
+                                </div>
+                            </div>
+                        </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"></label>
+                                <div class="col-sm-8">
+                                    <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button type="reset" class="btn btn-group-sm btn-default back-page">取消</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--隐藏域-->
+                        <input type="hidden" id="id" name="join_id" value="{$info.join_id ?? 0}">
+                    </form>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <!-- /.col -->
+        </div>
+</section>
+
+<script type="text/javascript">
+
+    $("#submit-form").click(function () {
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Week/weekAdd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href = "{:url('week/join', '', '', true)}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+
+    })
+
+    $('#reservation').daterangepicker();
+
+
+    $("#add_qrcode").click(function () {
+        $("#qrcode_file").click();
+        $("#qrcode_file").on("change",function(){
+            var objUrl = upload_file(this.files[0]) ;
+            if (objUrl.code == 1) {
+                $("#add_qrcode").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#qrcode").val(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+</script>

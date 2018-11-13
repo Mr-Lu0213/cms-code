@@ -1,0 +1,147 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <section class="content-header">
+                        <ol class="breadcrumb">
+                            <li><a href="" class="back-page"><i class="fa fa-dashboard"></i>{$week_info.title}</a></li>
+                            <li class="active">{$act.title}</li>
+                        </ol>
+                    </section>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post" action="{:url('Week/edit')}">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <div class="form-group operate_a">
+                                    <label class="col-sm-2 control-label">日期</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control select2" id="week_num" name="week_num">
+                                            {volist name='week_map' id='v'}
+                                            <option value="{$key}" title="{$v.title}" {if condition="$info.week_num eq $key"}selected{/if}>{$v.name}</option>
+                                            {/volist}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">每日小标题</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="week_day_title"
+                                               name="week_day_title" placeholder="每日标题" value="{$info.week_day_title}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">内容类型</label>
+                                    <div class="col-sm-8">
+                                        <label>
+                                            <input type="radio" class="content_type"  name="content_type" placeholder="内容类型" value="2" checked
+                                            >&nbsp;图文
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">内容标题</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" value="{$info.content_title}" name="content_title" placeholder="内容标题">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">图文详情</label>
+                                    <div class="col-sm-8">
+                                        <textarea class="form-control" id="content" name="content" >{$content.content}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">分值</label>
+                                    <div class="col-sm-8">
+                                        <input onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" name="points" placeholder="分值" value="{$info.points ?? ''}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-8">
+                                        <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                        <button type="button" class="btn btn-group-sm btn-default back-page">取消</button>
+                                    </div>
+                                </div>
+
+                                <!--隐藏域-->
+                                <input type="hidden" id="plan_id" name="plan_id" value="{$plan_id ?? 0}">
+                                <input type="hidden" name="act" value="编辑">
+                                <input type="hidden" name="item_id" value="{$info.item_id}">
+                    </form>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#content').summernote({
+            placeholder: '内容',
+            tabsize: 2,
+            height: 300,
+            lang: 'zh-CN',
+            fontNames: ['Arial', 'Tahoma', '宋体', '微软雅黑', '楷体', '黑体'],
+            fontNamesIgnoreCheck: ['宋体', '微软雅黑', '楷体', '黑体'],
+            callbacks: {
+                onImageUpload: function (files) {
+                    summerSendFile(files[0], 'content', "{:Url('index/uploadImg')}", "{$Think.config.aliyun_oss.res_url}");
+                },
+            }
+
+        });
+    })
+
+    $('#week_num').change(function () {
+        var value = $(this).val()
+        var title = $(this).find("option[value="+value+"]").attr('title')
+        if(title){
+            $('#week_day_title').val(title)
+            $('#day_title').val(title)
+        }
+    })
+
+
+    $("#submit-form").click(function () {
+
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Week/editadd')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href="{:url('week/edit')}?id={$plan_id}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+    })
+
+    $('#reservation').daterangepicker();
+
+
+    $("#add_qrcode").click(function () {
+        $("#qrcode_file").click();
+        $("#qrcode_file").on("change",function(){
+            var objUrl = upload_file(this.files[0]) ;
+            if (objUrl.code == 1) {
+                $("#add_qrcode").attr("src", '{$Think.config.aliyun_oss.res_url}' + objUrl.data.photo) ;
+                $("#qrcode").val(objUrl.data.photo);
+            }else{
+                layer.msg(objUrl.msg, {icon:5});
+            }
+        });
+    });
+</script>

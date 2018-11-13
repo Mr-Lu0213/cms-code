@@ -1,0 +1,110 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+                        <thead>
+                        <tr>
+                            <td>编号</td>
+                            <th>计划标题</th>
+                            <th>用户昵称</th>
+                            <th>手机号码</th>
+                            <th>报名方式</th>
+                            <th>状态</th>
+                            <th>已邀请人数量</th>
+                            <th>已获取成长分</th>
+                            <th>创建时间</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="list" id="v"}
+                        <tr id="node-{$v.join_id}" class="initialized parent_tr collapsed">
+
+                            <td>{$v.join_id}</td>
+                            <td>{$v.title}</td>
+                            <td>{$v.nick_name}</td>
+                            <td>{$v.phone}</td>
+                            <td>{$v.type_text}</td>
+                            <td>{$v.status_text}</td>
+                            <td>{$v.invites_num}</td>
+                            <td>{$v.points_total}</td>
+                            <td>{$v.created_time}</td>
+
+                        </tr>
+                        {/volist}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : true,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[2,3,4],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+
+        })
+
+    })
+
+    $(".select2").change(function () {
+        var data = $(this).serialize();
+        window.location.href = "{:url('Week/join')}?"+data;
+
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Week/joinEdit')}";
+    })
+
+
+
+    function statusArts(id, status) {
+        if (status == 1) {
+            var tips = '报名?'
+        } else {
+            var tips = '取消报名?'
+        }
+        layer.confirm(tips, {icon: 3, title: '修改状态'}, function (index) {
+            var url = "{:url('Week/joinStatus')}";
+            var result = http_service(url, {id: id, status: status}, 'POST');
+            if (result.code == 1) {
+                layer.msg(result.msg, {time: 1000, icon: 6}, function () {
+                    window.location.reload();
+                });
+            } else {
+                layer.msg(result.msg, {icon: 5});
+            }
+        });
+    }
+
+</script>

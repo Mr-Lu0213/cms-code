@@ -1,0 +1,112 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <section class="content-header">
+                        <ol class="breadcrumb">
+                            <li><a href="{:url('Permission/role')}" class="back-page"><i class="fa fa-dashboard"></i> 人员管理</a></li>
+                            <li class="active">{$act}</li>
+                        </ol>
+                    </section>
+                </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <form id="form-group" class="form-horizontal" enctype="multipart/form-data" method="post">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">昵称</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="person_name" placeholder="填写名称" value="{$info.name ?? ''}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">账号</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control"  name="person_account" placeholder="填写登陆账号" value="{$info.account ?? ''}"
+                                  {notempty name="$info.pid"}disabled{/notempty}
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">密码</label>
+                            <div class="col-sm-8">
+                                <input type="password" class="form-control" name="person_password" placeholder="设置密码" value="">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">角色</label>
+                            <div class="col-sm-8">
+                                {volist name="role_list" id="v"}
+                                <label>
+                                    <input type="checkbox" name="roles[]" value="{$v.role_id}" {$v.checked|default=""}>&nbsp;{$v.role_name}&nbsp;
+                                </label>
+                                {/volist}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button type="button" id="submit-form" class="btn btn-group-sm btn-primary">确定</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-group-sm btn-default back-page">取消</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--隐藏域-->
+                    <input type="hidden" id="id" name="id" value="{$info.pid ?? 0}">
+
+            </form>
+            <!-- /.box-body -->
+
+    </div>
+        <!-- /.box -->
+
+</div>
+    <!-- /.col -->
+</div>
+</section>
+
+<script type="text/javascript">
+
+    $("#submit-form").click(function () {
+        var formdata = $("#form-group").serialize();
+        var url = "{:url('Permission/personSave')}";
+        var result = http_service(url, formdata, 'POST');
+        if(result.code == 1){
+            layer.msg(result.msg, {time:1000, icon:6}, function () {
+                window.location.href = "{:url('Permission/person')}";
+            });
+        }else{
+            layer.msg(result.msg, {icon:5});
+        }
+    })
+
+    $(document).on('click', '.menu_collapsed', function () {
+        var id = $(this).attr('id')
+        $(this).removeClass('menu_collapsed').addClass('menu_collapse')
+        $(this).removeClass('fa-caret-right').addClass('fa-caret-down')
+        $('.child-'+id).show()
+    })
+
+    $(document).on('click', '.menu_collapse', function () {
+        var id = $(this).attr('id')
+        $(this).removeClass('menu_collapse').addClass('menu_collapsed')
+        $(this).addClass('fa-caret-right').removeClass('fa-caret-down')
+        $('.child-'+id).hide()
+    })
+
+    $('.check_all').click(function () {
+        if($(this).prop('checked') == true){
+            $(this).parent().parent().find('.check_item').prop('checked', true)
+        }
+    })
+
+</script>

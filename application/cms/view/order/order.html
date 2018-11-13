@@ -1,0 +1,101 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+                        <form id="form-data" action="{:url('Order/orderadd')}" method="post" >
+                        </form>
+
+                        <thead>
+                        <tr>
+                            <th>编号</th>
+                            <th>订单类型</th>
+                            <th>关联内容</th>
+                            <th>用户昵称</th>
+                            <th>手机号码</th>
+                            <th>订单原价</th>
+                            <th>实际支付</th>
+                            <th>余额支付</th>
+                            <th>支付类型</th>
+                            <th>订单状态</th>
+                            <th>下单时间</th>
+                            <th>付款时间</th>
+
+                        </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : true,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : true,
+            "columnDefs"  :[
+                {
+                    "targets":[11],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip',
+            'processing': true,
+            'serverSide': true,
+            'ajax': "{:url('Order/ajaxData')}",
+            'columns': [
+                { data: 'order_id' },
+                { data: 'type_text' },
+                { data: 'relevance' },
+                { data: 'nick_name' },
+                { data: 'phone' },
+                { data: 'money' },
+                { data: 'original_money' },
+                { data: 'balance_payment' },
+                { data: 'pay_text' },
+                { data: 'status_text' },
+                { data: 'created_time' },
+                { data: 'paid_time' },
+
+            ]
+        })
+
+    })
+
+    $(".select2").change(function () {
+        var data = $(this).serialize();
+        window.location.href = "{:url('Order/order')}?"+data;
+
+    })
+
+    $('.create-button').click(function () {
+        window.location.href = "{:url('Order/orderEdit')}";
+    })
+
+
+
+</script>

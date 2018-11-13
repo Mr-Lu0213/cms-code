@@ -1,0 +1,173 @@
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <table id="table" class="table table-bordered table-hover table-custom treeTable">
+                            <button type="button" class="btn btn-primary btn-sm create-button table_btn" >实时概况</button>
+                        <thead>
+                        <tr>
+                            <th>浏览量</th>
+                            <th>访客数</th>
+                            <th>付款订单</th>
+                            <th>付款金额</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="node-{$v.member_id}" class="initialized parent_tr collapsed">
+                            <td>{$list}</td>
+                            <td>{$login_list}</td>
+                            <td>{$order_list}</td>
+                            <td>{$monery_list}</td>
+                        </tr>
+                        </tbody>
+                        <thead>
+                        <tr>
+                            <th>昨日全天</th>
+                            <th>昨日全天</th>
+                            <th>昨日全天</th>
+                            <th>昨日全天</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr id="" class="initialized parent_tr collapsed">
+                            <td>{$yesterday}</td>
+                            <td>{$login_yesterday}</td>
+                            <td>{$order_yesterday}</td>
+                            <td>{$monery_yesterday}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-body">
+                    <table id="tables" class="table table-bordered table-hover table-custom treeTable">
+                        <button type="button" class="btn btn-primary btn-sm create-button table_btn" >流量指标</button>
+                        <thead>
+                        <tr>
+                            <th>人均浏览量</th>
+                            <th>平均停留时长</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr  class="initialized parent_tr collapsed">
+                            <td>{$total}</td>
+                            <td>{$times}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                    <div class="box">
+                        <div class="box-body">
+                            <table id="is_table" class="table table-bordered table-hover table-custom treeTable">
+                                <button type="button" class="btn btn-primary btn-sm create-button table_btn" >Top销量排行</button>
+                                <thead>
+                                <tr>
+                                    <th>编号</th>
+                                    <th>图片</th>
+                                    <th>名称</th>
+                                    <th>类型</th>
+                                    <th>次数</th>
+                                    <th>总金额</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="initialized parent_tr collapsed">
+                                    <td>{$order.service_id}</td>
+                                    <td>{$course.photo}</td>
+                                    <td>{$course.title}</td>
+                                    <td>{$course.operate_type}</td>
+                                    <td>{$service_pay_num}</td>
+                                    <td>{$volume_list}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+
+
+<script>
+    $(function () {
+
+        $('#table').DataTable({
+            'paging'      : false,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : false,
+            "columnDefs"  :[
+                {
+                    "targets":[0],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+</script>
+<script>
+    $(function () {
+
+        $('#tables').DataTable({
+            'paging'      : false,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : false,
+            "columnDefs"  :[
+                {
+                    "targets":[0],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+</script>
+<script>
+    $(function () {
+
+        $('#is_table').DataTable({
+            'paging'      : false,
+            'lengthChange': false,
+            'info'        : false,
+            'autoWidth'   : false,
+            "stateSave"   : true,
+            'ordering'    : false,
+            "order"       : [[ 0, "desc" ]],
+            'searching'   : false,
+            "columnDefs"  :[
+                {
+                    "targets":[0],
+                    "searchable":false
+                }
+            ],
+            "language": datatable_lang,
+            "dom": 'flrtip'
+        })
+
+    })
+
+</script>
